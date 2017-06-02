@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -121,6 +122,15 @@ public class MainActivity extends Activity {
         startService(RebootIntent);
         dump_trace("MainActivity:onCreate:startService:RebootIntent");
         */
+        Intent intent = getIntent();
+        g_bFromBootCompleted = intent.getBooleanExtra("FromBootCompleted", false);
+        dump_trace("onCreate:bFromBootCompleted"+ g_bFromBootCompleted);
+        if (g_bFromBootCompleted)
+        {
+            dump_trace("onCreate:bFromBootCompleted = True");
+            //start 3min delay to test
+            startUSBStorage_Test();
+        }
     }
 
     boolean  g_bFromBootCompleted = false;
@@ -131,14 +141,7 @@ public class MainActivity extends Activity {
         dump_trace("onStart:start");
         setTitle(" SN:" + Build.SERIAL);
 
-        Intent intent = getIntent();
-        g_bFromBootCompleted = intent.getBooleanExtra("FromBootCompleted", false);
-        dump_trace("onStart:bFromBootCompleted"+ g_bFromBootCompleted);
-        if (g_bFromBootCompleted)
-        {
-            //start 3min delay to test
-            startUSBStorage_Test();
-        }
+
 
     }
 
@@ -491,7 +494,7 @@ http://www.captechconsulting.com/blogs/runtime-permissions-best-practices-and-ho
                 test FAIL stop ....test ....停在錯誤的畫面不要 shutdown.
              */
             //*** For Test shutdown
-            //g_USBTestResult = true;
+            g_USBTestResult = true;
             //*** For Test shutdown
 
             //Write test result into global variable.
@@ -503,7 +506,8 @@ http://www.captechconsulting.com/blogs/runtime-permissions-best-practices-and-ho
                 UIUpdateTestTimes(TestTimes);
                 dump_trace("Test Times:=" + TestTimes);
                 //TODO: shutdown...
-                shutdown_now();
+                //shutdown_now();
+                RebootNow();
             }else{
                 dump_trace("Test Result:FAIL");
                 // test FAIL, stop ....test ....停在錯誤的畫面不要 shutdown.
@@ -520,6 +524,11 @@ http://www.captechconsulting.com/blogs/runtime-permissions-best-practices-and-ho
         }
     }
 
+    public void RebootNow() {
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        dump_trace("Now rebooting...");
+        pm.reboot(null);
+    }
     private void shutdown_now()
     {
         dump_trace("shutdown_now:start");

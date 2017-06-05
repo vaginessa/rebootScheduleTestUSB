@@ -494,7 +494,7 @@ http://www.captechconsulting.com/blogs/runtime-permissions-best-practices-and-ho
                 test FAIL stop ....test ....停在錯誤的畫面不要 shutdown.
              */
             //*** For Test shutdown
-            g_USBTestResult = true;
+            //g_USBTestResult = true;
             //*** For Test shutdown
 
             //Write test result into global variable.
